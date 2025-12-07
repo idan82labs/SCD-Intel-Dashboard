@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     SAM_GOV_API_KEY: Optional[str] = None
     EPO_CONSUMER_KEY: Optional[str] = None
     EPO_CONSUMER_SECRET: Optional[str] = None
+    UN_COMTRADE_KEY: Optional[str] = None
+
+    # SEC EDGAR (no API key required, but needs contact email)
+    SEC_EDGAR_CONTACT_EMAIL: str = "research@example.com"
 
     # Database
     DATABASE_URL: str = "sqlite:///./data/research.db"

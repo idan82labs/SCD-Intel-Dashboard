@@ -32,8 +32,12 @@ class DataSourceRegistry:
         from app.data_sources.web.rss import RSSSource
         from app.data_sources.government.usaspending import USASpendingSource
         from app.data_sources.government.sam_gov import SAMGovSource
+        from app.data_sources.government.eu_ted import EUTEDSource
+        from app.data_sources.government.canada_buys import CanadaGovSource
         from app.data_sources.patents.uspto import USPTOSource
         from app.data_sources.patents.epo import EPOSource
+        from app.data_sources.company.sec_edgar import SECEdgarSource
+        from app.data_sources.trade.un_comtrade import UNComtradeSource
 
         # Web sources
         if settings.TAVILY_API_KEY:
@@ -106,6 +110,53 @@ class DataSourceRegistry:
                     data_types=["patents", "applications"],
                 ),
             )
+
+        # Company/Financial sources
+        self._register_source(
+            "sec_edgar",
+            SECEdgarSource(settings.SEC_EDGAR_CONTACT_EMAIL),
+            SourceCapability(
+                name="sec_edgar",
+                description="SEC EDGAR filings - 10-K, 10-Q, 8-K for public companies",
+                query_types=["company", "ticker", "keyword"],
+                data_types=["filings", "financials", "disclosures"],
+            ),
+        )
+
+        # International Government sources
+        self._register_source(
+            "eu_ted",
+            EUTEDSource(),
+            SourceCapability(
+                name="eu_ted",
+                description="EU TED - European public procurement notices and tenders",
+                query_types=["keyword", "cpv_code", "country"],
+                data_types=["tenders", "contracts", "awards"],
+            ),
+        )
+
+        self._register_source(
+            "canada_gov",
+            CanadaGovSource(),
+            SourceCapability(
+                name="canada_gov",
+                description="Canadian government procurement and open data",
+                query_types=["keyword", "organization", "vendor"],
+                data_types=["contracts", "datasets", "tenders"],
+            ),
+        )
+
+        # Trade data sources
+        self._register_source(
+            "un_comtrade",
+            UNComtradeSource(settings.UN_COMTRADE_KEY),
+            SourceCapability(
+                name="un_comtrade",
+                description="UN Comtrade - International trade statistics by HS code",
+                query_types=["hs_code", "country", "year"],
+                data_types=["trade_flows", "exports", "imports"],
+            ),
+        )
 
         # Initialize all registered sources
         for source in self._sources.values():
