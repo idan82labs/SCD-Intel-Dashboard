@@ -37,6 +37,7 @@ class DataSourceRegistry:
         from app.data_sources.government.canada_buys import CanadaGovSource
         from app.data_sources.patents.uspto import USPTOSource
         from app.data_sources.patents.epo import EPOSource
+        from app.data_sources.patents.espacenet import EspacenetSource
         from app.data_sources.company.sec_edgar import SECEdgarSource
         from app.data_sources.trade.un_comtrade import UNComtradeSource
 
@@ -112,13 +113,26 @@ class DataSourceRegistry:
             ),
         )
 
+        # Espacenet - always available, no API key required
+        self._register_source(
+            "espacenet",
+            EspacenetSource(),
+            SourceCapability(
+                name="espacenet",
+                description="European/worldwide patent search - 130M+ patents from 100+ countries",
+                query_types=["keyword", "cpc_code", "applicant", "date_range"],
+                data_types=["patents", "applications", "worldwide"],
+            ),
+        )
+
+        # EPO API - optional upgrade when API key available
         if settings.EPO_CONSUMER_KEY and settings.EPO_CONSUMER_SECRET:
             self._register_source(
                 "epo",
                 EPOSource(settings.EPO_CONSUMER_KEY, settings.EPO_CONSUMER_SECRET),
                 SourceCapability(
                     name="epo",
-                    description="European Patent Office - European patent filings",
+                    description="European Patent Office API - faster, higher limits",
                     query_types=["keyword", "cpc_code", "applicant", "date_range"],
                     data_types=["patents", "applications"],
                 ),
