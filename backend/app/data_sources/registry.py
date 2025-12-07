@@ -29,6 +29,7 @@ class DataSourceRegistry:
         """Initialize all data sources."""
         # Import sources here to avoid circular imports
         from app.data_sources.web.tavily import TavilySource
+        from app.data_sources.web.exa import ExaSource
         from app.data_sources.web.rss import RSSSource
         from app.data_sources.government.usaspending import USASpendingSource
         from app.data_sources.government.sam_gov import SAMGovSource
@@ -49,6 +50,18 @@ class DataSourceRegistry:
                     description="Real-time web search for current information, news, and general research",
                     query_types=["keyword", "question", "topic"],
                     data_types=["articles", "web_pages", "news"],
+                ),
+            )
+
+        if settings.EXA_API_KEY:
+            self._register_source(
+                "exa_search",
+                ExaSource(settings.EXA_API_KEY),
+                SourceCapability(
+                    name="exa_search",
+                    description="Neural web search - superior for technical, defense, and specialized queries",
+                    query_types=["natural_language", "technical", "company", "topic"],
+                    data_types=["articles", "research", "technical_docs", "news"],
                 ),
             )
 

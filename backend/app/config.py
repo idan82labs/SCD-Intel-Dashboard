@@ -19,7 +19,10 @@ class Settings(BaseSettings):
 
     # Required API Keys
     ANTHROPIC_API_KEY: str = ""
-    TAVILY_API_KEY: str = ""
+
+    # Web Search API Keys (at least one recommended)
+    TAVILY_API_KEY: Optional[str] = None
+    EXA_API_KEY: Optional[str] = None
 
     # Optional API Keys
     SAM_GOV_API_KEY: Optional[str] = None
