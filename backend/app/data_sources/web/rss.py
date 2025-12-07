@@ -5,7 +5,12 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
 
-import feedparser
+try:
+    import feedparser
+    FEEDPARSER_AVAILABLE = True
+except ImportError:
+    FEEDPARSER_AVAILABLE = False
+
 import httpx
 
 from app.data_sources.base import BaseDataSource
@@ -76,6 +81,10 @@ class RSSSource(BaseDataSource):
         Returns:
             List of matching articles
         """
+        if not FEEDPARSER_AVAILABLE:
+            print("RSS source disabled: feedparser not installed")
+            return []
+
         if not self._client:
             raise RuntimeError("RSS source not initialized")
 
@@ -120,6 +129,9 @@ class RSSSource(BaseDataSource):
         Returns:
             List of feed entries
         """
+        if not FEEDPARSER_AVAILABLE:
+            return []
+
         try:
             response = await self._client.get(url)
             response.raise_for_status()
